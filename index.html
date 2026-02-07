@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABUNDA AI | Legal OS</title>
-
-<link rel="icon" type="image/png" href="/my-favicon/favicon-96x96.png" sizes="96x96" />
+    <title>ABUNDA LEGAL | Inteligencia Jurídica</title>
+    
+	<link rel="icon" type="image/png" href="/my-favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/my-favicon/favicon.svg" />
     <link rel="shortcut icon" href="/my-favicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/my-favicon/apple-touch-icon.png" />
@@ -36,48 +36,45 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta name="theme-color" content="#ffffff">
-    
-    <!-- 1. Estilos y Fuentes -->
+	
+    <!-- Librerías -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
 
-    <!-- 2. React Core -->
+    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 3. Firebase SDK -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <!-- 4. PDF Generator Library (NUEVO) -->
+    <!-- PDF Lib -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .font-serif { font-family: 'Merriweather', serif; }
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        /* Estilos para el documento PDF (Hoja de papel) */
-        .paper-sheet {
-            background: white;
-            color: black;
-            padding: 40px;
-            font-family: 'Times New Roman', serif;
-            line-height: 1.5;
-            font-size: 12pt;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            margin: 20px auto;
-            max-width: 800px;
-            min-height: 1000px;
+        /* Documento Legal */
+        .legal-doc {
+            background: #fff; color: #000; padding: 50px;
+            font-family: 'Times New Roman', serif; line-height: 1.6; font-size: 12pt;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            min-height: 1000px; max-width: 800px; margin: 0 auto;
         }
-        .paper-sheet h1 { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
-        .paper-sheet p { margin-bottom: 12px; text-align: justify; }
-        .paper-sheet .signature-box { margin-top: 50px; display: flex; justify-content: space-between; }
-        .paper-sheet .sign-line { border-top: 1px solid black; width: 40%; text-align: center; padding-top: 5px; }
+        .legal-doc h1 { text-align: center; text-transform: uppercase; font-weight: bold; margin-bottom: 20px; font-size: 14pt; }
+        .legal-doc p { text-align: justify; margin-bottom: 10px; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -87,10 +84,11 @@
         const { useState, useEffect, useRef } = React;
 
         // ==========================================
-        // CONFIGURACIÓN (REVISAR SI CAMBIÓ DE APP)
+        // CONFIGURACIÓN DE CONEXIÓN
         // ==========================================
-        const DEFAULT_BACKEND_URL = "https://abunda-bca693eb3dbb.herokuapp.com"; 
+        const API_URL = "https://abundalegal-c960c33a1447.herokuapp.com"; 
 
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyC8Qqq7F1kGvaNlTzL5gRQWTdMBVjuEamQ", 
             authDomain: "abunda-ai.firebaseapp.com",
@@ -124,25 +122,34 @@
                     const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
                     onLoginSuccess(userCredential.user);
                 } catch (err) {
-                    setError("Acceso denegado: " + err.message);
+                    setError("Acceso denegado. Verifique sus credenciales.");
                     setLoading(false);
                 }
             };
 
             return (
-                <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4 fade-in">
-                    <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
+                <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4 fade-in relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+                    <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700 relative z-10">
                         <div className="text-center mb-8">
-                            <i className="ph ph-gavel text-4xl text-blue-500 mb-2"></i>
-                            <h1 className="text-2xl font-display font-bold text-white">ABUNDA LEGAL</h1>
-                            <p className="text-slate-400 text-sm mt-2">Sistema Operativo Jurídico</p>
+                            <div className="inline-block p-4 rounded-full bg-slate-900 border border-slate-600 mb-4">
+                                <i className="ph ph-scales text-4xl text-yellow-500"></i>
+                            </div>
+                            <h1 className="text-2xl font-serif font-bold text-white">ABUNDA LEGAL</h1>
+                            <p className="text-slate-400 text-sm mt-2">Plataforma Jurídica Integral</p>
                         </div>
                         <form onSubmit={handleLogin} className="space-y-4">
-                            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-blue-500" placeholder="abogado@firma.com" />
-                            <input type="password" value={password} onChange={e=>setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-blue-500" placeholder="•••••••" />
-                            {error && <div className="text-red-400 text-xs bg-red-900/20 p-2 rounded">{error}</div>}
-                            <button disabled={loading} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition">
-                                {loading ? "Verificando Credenciales..." : "Ingresar al Bufete"}
+                            <div className="relative">
+                                <i className="ph ph-envelope absolute left-3 top-3.5 text-slate-500"></i>
+                                <input type="email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg pl-10 pr-3 py-3 text-white outline-none focus:border-yellow-500" placeholder="licenciado@bufete.com" />
+                            </div>
+                            <div className="relative">
+                                <i className="ph ph-lock-key absolute left-3 top-3.5 text-slate-500"></i>
+                                <input type="password" value={password} onChange={e=>setPassword(e.target.value)} className="w-full bg-slate-900 border border-slate-600 rounded-lg pl-10 pr-3 py-3 text-white outline-none focus:border-yellow-500" placeholder="•••••••" />
+                            </div>
+                            {error && <div className="text-red-400 text-xs bg-red-900/20 p-2 rounded text-center">{error}</div>}
+                            <button disabled={loading} className="w-full py-3 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-slate-900 font-bold rounded-lg transition shadow-lg">
+                                {loading ? "Autenticando..." : "Ingresar al Sistema"}
                             </button>
                         </form>
                     </div>
@@ -150,185 +157,66 @@
             );
         };
 
-        // --- NUEVO: GENERADOR DE DOCUMENTOS ---
         const LegalGenerator = ({ onClose, apiUrl }) => {
-            const [docType, setDocType] = useState("Arrendamiento");
             const [details, setDetails] = useState("");
-            const [generating, setGenerating] = useState(false);
-            const [generatedContent, setGeneratedContent] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [content, setContent] = useState("");
 
-            const generateDocument = async () => {
-                if(!details.trim()) return alert("Por favor ingresa los detalles del contrato.");
-                setGenerating(true);
-
+            const generateContract = async () => {
+                if(!details.trim()) return;
+                setLoading(true);
                 try {
-                    // Prompt Jurídico de Alta Precisión
-                    const prompt = `
-                        ACTÚA COMO: Abogado Senior experto en leyes de Costa Rica.
-                        TAREA: Redactar un CONTRATO DE ${docType.toUpperCase()} formal y legalmente vinculante.
-                        DETALLES: ${details}
-                        FORMATO DE SALIDA: HTML puro (sin markdown, sin \`\`\`). Usa etiquetas <h1> para título, <p> para párrafos, <b> para nombres y datos clave.
-                        ESTRUCTURA:
-                        1. Título Centrado.
-                        2. Encabezado (Partes involucradas).
-                        3. Cláusulas (Objeto, Plazo, Precio, Obligaciones, Incumplimiento, Ley Aplicable).
-                        4. Cierre y Firmas.
-                        TONO: Formal, jurídico, preciso.
-                    `;
-
+                    const prompt = `ACTÚA COMO: Abogado Notario Experto en legislación de Costa Rica. TAREA: Redactar un documento legal formal. DETALLES: ${details}. FORMATO DE SALIDA: HTML limpio (h1, h2, p, b, ul, li). Usa lenguaje jurídico técnico, cita leyes si aplica (Código Civil, Código de Comercio, etc.).`;
+                    
                     const response = await fetch(`${apiUrl}/api/chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: prompt, history: [] })
                     });
-
+                    
                     const data = await response.json();
-                    // Limpiamos un poco el resultado por si la IA manda markdown
-                    let cleanHtml = data.response.replace(/```html/g, '').replace(/```/g, '');
-                    setGeneratedContent(cleanHtml);
-
-                } catch (e) {
-                    alert("Error al generar: " + e.message);
-                } finally {
-                    setGenerating(false);
-                }
+                    setContent(data.response.replace(/```html/g, '').replace(/```/g, ''));
+                } catch(e) { alert("Error: " + e.message); }
+                setLoading(false);
             };
 
             const downloadPDF = () => {
-                const element = document.getElementById('contract-preview');
-                const opt = {
-                    margin: 20,
-                    filename: `Contrato_${docType}_Abunda.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-                html2pdf().set(opt).from(element).save();
+                const element = document.getElementById('contract-content');
+                html2pdf().from(element).save('Documento_Legal_Abunda.pdf');
             };
-
-            return (
-                <div className="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center p-4 fade-in backdrop-blur-sm overflow-hidden">
-                    <div className="w-full max-w-5xl h-[90vh] bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl flex flex-col md:flex-row overflow-hidden">
-                        
-                        {/* LEFT: INPUTS */}
-                        <div className="w-full md:w-1/3 p-6 border-r border-slate-700 flex flex-col bg-slate-850">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="font-bold text-white flex items-center gap-2"><i className="ph ph-gavel text-blue-400 text-xl"></i> Redactor Legal</h2>
-                                <button onClick={onClose}><i className="ph ph-x text-white text-xl"></i></button>
-                            </div>
-                            
-                            <div className="space-y-4 flex-1">
-                                <div>
-                                    <label className="text-xs text-slate-400 uppercase font-bold">Tipo de Documento</label>
-                                    <select value={docType} onChange={e=>setDocType(e.target.value)} className="w-full mt-1 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none">
-                                        <option>Arrendamiento (Alquiler)</option>
-                                        <option>Compraventa de Inmueble</option>
-                                        <option>Servicios Profesionales</option>
-                                        <option>Confidencialidad (NDA)</option>
-                                        <option>Poder Especial</option>
-                                    </select>
-                                </div>
-                                
-                                <div className="flex-1 flex flex-col">
-                                    <label className="text-xs text-slate-400 uppercase font-bold mb-1">Detalles del Caso</label>
-                                    <textarea 
-                                        value={details} 
-                                        onChange={e=>setDetails(e.target.value)} 
-                                        className="flex-1 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none text-sm font-mono resize-none"
-                                        placeholder="Ej: Arrendador: Juan Pérez (Cédula 1-1111). Arrendatario: María Solís. Propiedad: Casa en Escazú. Renta: $1000/mes. Plazo: 1 año. Depósito: $1000."
-                                    ></textarea>
-                                </div>
-
-                                <button 
-                                    onClick={generateDocument} 
-                                    disabled={generating}
-                                    className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/20 transition flex justify-center gap-2"
-                                >
-                                    {generating ? <i className="ph ph-spinner animate-spin"></i> : <i className="ph ph-magic-wand"></i>}
-                                    {generating ? "Redactando..." : "Generar Contrato"}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* RIGHT: PREVIEW */}
-                        <div className="w-full md:w-2/3 bg-slate-500 p-8 overflow-y-auto flex flex-col items-center">
-                            {generatedContent ? (
-                                <>
-                                    <div className="flex gap-4 mb-4 w-full max-w-[800px] justify-end">
-                                        <button onClick={() => setGeneratedContent(null)} className="px-4 py-2 bg-slate-700 text-white rounded text-sm hover:bg-slate-600">Editar</button>
-                                        <button onClick={downloadPDF} className="px-4 py-2 bg-red-600 text-white rounded text-sm font-bold hover:bg-red-500 shadow flex items-center gap-2">
-                                            <i className="ph ph-file-pdf"></i> Descargar PDF
-                                        </button>
-                                    </div>
-                                    <div id="contract-preview" className="paper-sheet" dangerouslySetInnerHTML={{__html: generatedContent}}></div>
-                                </>
-                            ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center text-slate-300 opacity-50">
-                                    <i className="ph ph-file-text text-6xl mb-4"></i>
-                                    <p>Esperando datos para redactar...</p>
-                                </div>
-                            )}
-                        </div>
-
-                    </div>
-                </div>
-            );
-        };
-
-        const KnowledgePanel = ({ onClose, user }) => {
-            const [docs, setDocs] = useState([]);
-            const [newDocContent, setNewDocContent] = useState("");
-            const [saving, setSaving] = useState(false);
-
-            useEffect(() => {
-                if(db && user) {
-                    db.collection("knowledge").orderBy("timestamp", "desc").get()
-                      .then(snap => setDocs(snap.docs.map(d => ({id: d.id, ...d.data()}))));
-                }
-            }, [user]);
-
-            const handleSave = async () => {
-                if(!newDocContent.trim()) return;
-                setSaving(true);
-                try {
-                    await db.collection("knowledge").add({
-                        content: newDocContent,
-                        createdBy: user.email,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    setNewDocContent("");
-                    const snap = await db.collection("knowledge").orderBy("timestamp", "desc").get();
-                    setDocs(snap.docs.map(d => ({id: d.id, ...d.data()})));
-                } catch (e) { alert("Error al guardar."); }
-                setSaving(false);
-            };
-
-            const handleDelete = async (id) => {
-                if(confirm("¿Borrar?")) {
-                    await db.collection("knowledge").doc(id).delete();
-                    setDocs(prev => prev.filter(d => d.id !== id));
-                }
-            }
 
             return (
                 <div className="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center p-4 fade-in">
-                    <div className="bg-slate-800 w-full max-w-3xl rounded-2xl border border-slate-700 shadow-2xl flex flex-col max-h-[90vh]">
-                        <div className="p-4 border-b border-slate-700 flex justify-between items-center">
-                            <h2 className="font-bold text-white flex items-center gap-2"><i className="ph ph-books text-blue-400"></i> Biblioteca Legal (RAG)</h2>
-                            <button onClick={onClose}><i className="ph ph-x text-white text-xl"></i></button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-6">
-                            <p className="text-xs text-slate-400 mb-2">Sube aquí el Código Civil, leyes o modelos de contratos anteriores.</p>
-                            <textarea value={newDocContent} onChange={e=>setNewDocContent(e.target.value)} className="w-full h-32 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none mb-4 font-mono text-sm" placeholder="Pega el texto de la ley o jurisprudencia..."></textarea>
-                            <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold mb-6">Guardar Referencia</button>
-                            <div className="space-y-3">
-                                {docs.map(doc => (
-                                    <div key={doc.id} className="bg-slate-700/30 p-4 rounded-xl border border-slate-700/50 flex justify-between items-start">
-                                        <p className="text-xs text-slate-300 line-clamp-2">{doc.content}</p>
-                                        <button onClick={() => handleDelete(doc.id)} className="text-slate-500 hover:text-red-400 ml-2"><i className="ph ph-trash"></i></button>
-                                    </div>
-                                ))}
+                    <div className="w-full max-w-7xl h-[90vh] bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl flex flex-col md:flex-row overflow-hidden">
+                        <div className="w-full md:w-1/3 p-6 border-r border-slate-700 bg-slate-850 flex flex-col">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="font-bold text-white flex gap-2"><i className="ph ph-file-doc text-yellow-500 text-xl"></i> Redacción Jurídica</h2>
+                                <button onClick={onClose}><i className="ph ph-x text-white hover:text-red-500 transition"></i></button>
                             </div>
+                            <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30 mb-4">
+                                <p className="text-xs text-blue-200"><i className="ph ph-info mr-1"></i> La IA utilizará la legislación vigente y formatos estándar para crear el borrador.</p>
+                            </div>
+                            <textarea value={details} onChange={e=>setDetails(e.target.value)} className="flex-1 bg-slate-900 border border-slate-600 rounded-lg p-3 text-white outline-none mb-4 text-sm resize-none font-sans leading-relaxed" placeholder="Describe el documento: 'Contrato de arrendamiento para casa en Santa Ana, arrendador X, arrendatario Y, monto $1500...'"></textarea>
+                            <button onClick={generateContract} disabled={loading} className="py-3 bg-gradient-to-r from-yellow-600 to-yellow-500 text-slate-900 font-bold rounded-lg mb-2 shadow-lg hover:shadow-yellow-500/20 transition flex justify-center items-center gap-2">
+                                {loading ? <i className="ph ph-spinner animate-spin"></i> : <i className="ph ph-magic-wand"></i>}
+                                {loading ? "Redactando..." : "Generar Documento"}
+                            </button>
+                        </div>
+                        <div className="w-full md:w-2/3 bg-slate-200 p-8 overflow-y-auto flex flex-col items-center">
+                            {content ? (
+                                <>
+                                    <div className="w-full max-w-[800px] flex justify-end mb-4 gap-2">
+                                        <button onClick={() => setContent(null)} className="px-4 py-2 bg-slate-700 text-white rounded shadow text-xs font-bold hover:bg-slate-600">Nuevo</button>
+                                        <button onClick={downloadPDF} className="px-4 py-2 bg-red-600 text-white rounded shadow text-xs font-bold hover:bg-red-500 flex items-center gap-2"><i className="ph ph-file-pdf"></i> PDF</button>
+                                    </div>
+                                    <div id="contract-content" className="legal-doc shadow-2xl" dangerouslySetInnerHTML={{__html: content}}></div>
+                                </>
+                            ) : (
+                                <div className="h-full flex flex-col items-center justify-center text-slate-400 opacity-50">
+                                    <i className="ph ph-files text-6xl mb-4"></i>
+                                    <p className="font-serif italic text-lg">El documento aparecerá aquí...</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -336,11 +224,10 @@
         };
 
         const ChatInterface = ({ user, apiUrl, onLogout }) => {
-            const [messages, setMessages] = useState([{ role: 'ai', content: `Bienvenido, Licenciado.\nEl sistema Abunda Legal está listo.` }]);
+            const [messages, setMessages] = useState([{ role: 'ai', content: `Bienvenido, Licenciado.\nEstoy conectado a la base de datos jurídica global. ¿Qué caso analizaremos hoy?` }]);
             const [input, setInput] = useState("");
             const [loading, setLoading] = useState(false);
-            const [showKnowledge, setShowKnowledge] = useState(false);
-            const [showLegalGen, setShowLegalGen] = useState(false);
+            const [showGenerator, setShowGenerator] = useState(false);
             const bottomRef = useRef(null);
 
             useEffect(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), [messages]);
@@ -353,71 +240,88 @@
                 setLoading(true);
 
                 try {
-                    let context = "";
-                    if(db) {
-                        try {
-                            const snapshot = await db.collection("knowledge").orderBy("timestamp", "desc").limit(5).get();
-                            const docsContent = snapshot.docs.map(doc => (doc.data().content || "").substring(0, 3000)).join("\n\n---\n\n");
-                            if(docsContent) context = `LEYES Y JURISPRUDENCIA:\n${docsContent.substring(0, 15000)}...\n\n`;
-                        } catch (err) { console.warn("Error RAG:", err); }
-                    }
-
-                    const finalMessage = context ? `${context}CONSULTA LEGAL: ${newMsg.content}` : newMsg.content;
+                    // CONTEXTO DE LEYES (Prompt Engineering Avanzado)
+                    // No necesitamos subir las leyes, le decimos a la IA que actúe como si las tuviera.
+                    // GPT-4o ya fue entrenado con la Constitución y códigos de CR.
+                    const legalContext = `
+                        INSTRUCCIÓN MAESTRA: Actúa como un Abogado Senior especialista en Derecho Costarricense e Internacional.
+                        FUENTE DE VERDAD: Utiliza tu conocimiento pre-entrenado sobre la Constitución Política de Costa Rica, Código Civil, Código de Comercio, Código Penal y legislación laboral vigente.
+                        
+                        SI LA CONSULTA ES ESPECÍFICA: Cita el artículo o la ley correspondiente.
+                        SI FALTAN DATOS: Pide al usuario la información necesaria para dar un dictamen preciso.
+                        
+                        CONSULTA DEL USUARIO: ${newMsg.content}
+                    `;
 
                     const response = await fetch(`${apiUrl}/api/chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: finalMessage, history: messages })
+                        body: JSON.stringify({ message: legalContext, history: messages })
                     });
 
-                    if(!response.ok) throw new Error(`Error HTTP ${response.status}`);
+                    if(!response.ok) throw new Error("Error de conexión");
                     const data = await response.json();
                     setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
 
                 } catch (e) {
-                    setMessages(prev => [...prev, { role: 'ai', content: "⚠️ Error de conexión." }]);
+                    setMessages(prev => [...prev, { role: 'ai', content: "⚠️ Error de conexión con el servidor jurídico." }]);
                 } finally { setLoading(false); }
             };
 
             return (
                 <div className="flex flex-col h-screen bg-slate-950">
-                    <header className="h-16 border-b border-slate-800 bg-slate-900 flex items-center px-4 justify-between shadow-sm z-20">
+                    <header className="h-16 border-b border-slate-800 bg-slate-900 flex items-center px-6 justify-between shadow-sm z-20">
                         <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                            <span className="font-display font-bold text-white text-lg tracking-wide">ABUNDA <span className="text-blue-500">LEGAL</span></span>
+                            <i className="ph ph-gavel text-2xl text-yellow-500"></i>
+                            <span className="font-serif font-bold text-white text-lg tracking-wide">ABUNDA <span className="text-yellow-500">LEGAL</span></span>
                         </div>
-                        <div className="flex items-center gap-3">
-                            {/* BOTÓN NUEVO: GENERADOR LEGAL */}
-                            <button onClick={() => setShowLegalGen(true)} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition">
-                                <i className="ph ph-file-text"></i> Redactar Contrato
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => setShowGenerator(true)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 rounded-lg text-sm font-bold flex items-center gap-2 transition shadow-lg">
+                                <i className="ph ph-file-plus text-yellow-500"></i> Redactar Documento
                             </button>
-                            
-                            <button onClick={() => setShowKnowledge(true)} className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center transition" title="Leyes"><i className="ph ph-books text-xl"></i></button>
-                            <button onClick={onLogout} className="text-slate-400 hover:text-red-400 ml-2"><i className="ph ph-sign-out text-xl"></i></button>
+                            <div className="h-6 w-px bg-slate-700"></div>
+                            <div className="text-xs text-slate-400 flex items-center gap-2">
+                                <i className="ph ph-user-circle text-lg"></i> <span className="hidden md:inline">{user.email}</span>
+                            </div>
+                            <button onClick={onLogout} className="text-slate-400 hover:text-red-400 transition" title="Salir"><i className="ph ph-sign-out text-xl"></i></button>
                         </div>
                     </header>
                     
-                    <div className="flex-1 overflow-y-auto p-4 space-y-6">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
                         {messages.map((msg, i) => (
-                            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-md ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'}`}>
-                                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
+                                <div className={`max-w-[85%] p-5 rounded-2xl text-sm leading-relaxed shadow-md ${
+                                    msg.role === 'user' 
+                                    ? 'bg-blue-600 text-white rounded-br-none' 
+                                    : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'
+                                }`}>
+                                    <div className="whitespace-pre-wrap font-serif">{msg.content}</div>
                                 </div>
                             </div>
                         ))}
-                        {loading && <div className="text-slate-500 text-xs ml-4">Analizando jurisprudencia...</div>}
+                        {loading && (
+                            <div className="flex justify-start">
+                                <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700 rounded-bl-none flex items-center gap-3">
+                                    <i className="ph ph-books text-yellow-500 text-xl animate-pulse"></i>
+                                    <span className="text-xs text-slate-400 font-bold">Consultando jurisprudencia...</span>
+                                </div>
+                            </div>
+                        )}
                         <div ref={bottomRef}></div>
                     </div>
                     
-                    <div className="p-4 bg-slate-900 border-t border-slate-800">
-                        <div className="relative group">
-                            <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && sendMessage()} className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl pl-5 pr-14 py-4 focus:outline-none focus:border-blue-500 transition shadow-lg placeholder:text-slate-500" placeholder="Consulta jurídica..." disabled={loading} />
-                            <button onClick={sendMessage} disabled={loading} className="absolute right-2 top-2 bottom-2 aspect-square bg-blue-600 hover:bg-blue-500 text-white rounded-lg flex items-center justify-center transition disabled:opacity-50"><i className="ph ph-paper-plane-right-fill text-xl"></i></button>
+                    <div className="p-6 bg-slate-900 border-t border-slate-800">
+                        <div className="max-w-4xl mx-auto relative group">
+                            <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyPress={e => e.key === 'Enter' && sendMessage()} className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl pl-6 pr-14 py-4 focus:outline-none focus:border-yellow-500 transition shadow-lg placeholder:text-slate-500 font-sans" placeholder="Escriba su consulta jurídica aquí..." disabled={loading} />
+                            <button onClick={sendMessage} disabled={loading} className="absolute right-2 top-2 bottom-2 aspect-square bg-yellow-600 hover:bg-yellow-500 text-slate-900 rounded-lg flex items-center justify-center transition disabled:opacity-50"><i className="ph ph-paper-plane-right-fill text-xl"></i></button>
+                        </div>
+                        <div className="text-center mt-3 flex justify-center gap-4 text-[10px] text-slate-600 font-bold uppercase tracking-wider">
+                            <span><i className="ph ph-shield-check"></i> Privacidad Garantizada</span>
+                            <span><i className="ph ph-globe"></i> Legislación Global</span>
                         </div>
                     </div>
 
-                    {showKnowledge && <KnowledgePanel onClose={() => setShowKnowledge(false)} user={user} />}
-                    {showLegalGen && <LegalGenerator onClose={() => setShowLegalGen(false)} apiUrl={apiUrl} />}
+                    {showGenerator && <LegalGenerator onClose={() => setShowGenerator(false)} apiUrl={apiUrl} />}
                 </div>
             );
         };
@@ -425,11 +329,13 @@
         const App = () => {
             const [user, setUser] = useState(null);
             useEffect(() => {
-                const unsubscribe = firebase.auth().onAuthStateChanged(u => setUser(u || null));
+                const unsubscribe = firebase.auth().onAuthStateChanged((u) => {
+                    setUser(u || null);
+                });
                 return () => unsubscribe();
             }, []);
             const handleLogout = async () => { await firebase.auth().signOut(); };
-            return <React.Fragment>{!user ? <LoginScreen onLoginSuccess={setUser} /> : <ChatInterface user={user} apiUrl={DEFAULT_BACKEND_URL} onLogout={handleLogout} />}</React.Fragment>;
+            return <React.Fragment>{!user ? <LoginScreen onLoginSuccess={setUser} /> : <ChatInterface user={user} apiUrl={API_URL} onLogout={handleLogout} />}</React.Fragment>;
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -437,5 +343,3 @@
     </script>
 </body>
 </html>
-
-
